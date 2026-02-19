@@ -4,1407 +4,509 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CIVILTCTH 2 | المؤتمر الهندسي المتكامل</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Tajawal', sans-serif;
-            scroll-behavior: smooth;
-        }
-        
         :root {
-            --primary: #1e3a8a;
-            --secondary: #0f172a;
-            --accent: #3b82f6;
+            --primary: #1e40af;
+            --secondary: #3b82f6;
+            --accent: #ef4444;
         }
-
-        body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .hero-gradient {
-            background: linear-gradient(145deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-gradient::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15);
-        }
-
-        .upload-area {
-            border: 2px dashed #cbd5e1;
-            transition: all 0.3s;
-            cursor: pointer;
-            background: #f8fafc;
-        }
-
-        .upload-area:hover {
-            border-color: var(--accent);
-            background: #eff6ff;
-            transform: scale(1.02);
-        }
-
-        .upload-area.dragover {
-            border-color: #22c55e;
-            background: #f0fdf4;
-        }
-
-        .section-padding {
-            padding: 6rem 1.5rem;
-        }
-
-        .tab-active {
-            border-bottom: 4px solid var(--accent);
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .fade-in {
-            animation: fadeInUp 0.6s ease forwards;
-            opacity: 0;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .notification {
-            position: fixed;
-            top: 90px;
-            left: 20px;
-            background: #10b981;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
-            z-index: 1000;
-            animation: slideInLeft 0.4s ease;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notification.error {
-            background: #ef4444;
-            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
-        }
-
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .online-users {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            font-size: 14px;
-            z-index: 100;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s;
-        }
-
-        .online-users:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-        }
-
-        .typing-indicator {
-            background: #e2e8f0;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            display: inline-block;
-            margin: 8px 0;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .live-activity {
-            transition: all 0.3s;
-            border-right: 4px solid var(--accent);
-        }
-
-        .live-activity:hover {
-            background: #f1f5f9;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #2563eb);
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-
-        .admin-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .stat-card {
-            background: linear-gradient(145deg, white, #f8fafc);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
-
-        .btn-primary {
-            background: linear-gradient(145deg, var(--accent), #2563eb);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--primary);
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            background: #f8fafc;
-        }
-
-        input, select, textarea {
-            transition: all 0.3s;
-            border: 2px solid #e2e8f0;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 16px;
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            transition: all 0.5s;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-item .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: white;
-            padding: 20px;
-            transform: translateY(100%);
-            transition: all 0.3s;
-        }
-
-        .gallery-item:hover .overlay {
-            transform: translateY(0);
-        }
-
-        @media (max-width: 768px) {
-            .section-padding {
-                padding: 4rem 1rem;
-            }
-            
-            .notification {
-                top: 70px;
-                left: 10px;
-                right: 10px;
-                border-radius: 12px;
-            }
-        }
+        body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        .hero-gradient { background: radial-gradient(circle at top right, #1e3a8a, #0f172a); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .upload-area { border: 2px dashed #cbd5e1; transition: all 0.3s ease; }
+        .upload-area.active { border-color: var(--secondary); background: #eff6ff; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--secondary); margin: 10px auto; border-radius: 2px; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-slate-50 text-slate-900 custom-scrollbar">
 
-    <!-- إشعارات -->
-    <div id="notification" class="notification hidden">
-        <i class="fas fa-check-circle text-xl"></i>
-        <span id="notificationMessage"></span>
-    </div>
-
-    <!-- مؤشر المستخدمين المتصلين -->
-    <div id="onlineUsers" class="online-users hidden">
-        <i class="fas fa-users text-blue-600 ml-2"></i>
-        <span id="onlineCount">0</span> مستخدم متصل
-    </div>
-
-    <!-- شريط التنقل -->
-    <nav class="fixed w-full z-50 glass shadow-sm py-3">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-microchip text-white text-xl"></i>
-                    </div>
-                    <span class="text-xl md:text-2xl font-extrabold text-slate-800">CIVILTCTH <span class="text-blue-600">2</span></span>
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass shadow-sm py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-700 p-2 rounded-lg shadow-lg">
+                    <i class="fas fa-city text-white text-xl"></i>
                 </div>
-                
-                <!-- القائمة للشاشات الكبيرة -->
-                <div class="hidden lg:flex items-center gap-8">
-                    <a href="#agenda" class="text-slate-600 hover:text-blue-600 transition font-medium">الأجندة</a>
-                    <a href="#register" class="text-slate-600 hover:text-blue-600 transition font-medium">التسجيل</a>
-                    <a href="#gallery" class="text-slate-600 hover:text-blue-600 transition font-medium">المعرض</a>
-                    <a href="#live" class="text-slate-600 hover:text-blue-600 transition font-medium">المباشر</a>
-                    <a href="#admin" class="bg-red-50 text-red-600 px-5 py-2 rounded-xl font-bold hover:bg-red-100 transition border border-red-200">
-                        <i class="fas fa-crown ml-2"></i>لوحة التحكم
-                    </a>
-                </div>
-
-                <!-- زر القائمة للجوال -->
-                <button class="lg:hidden text-2xl text-slate-700" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <span class="text-2xl font-black tracking-tighter text-slate-800">CIVILTCTH <span class="text-blue-600">2</span></span>
             </div>
-
-            <!-- القائمة المنسدلة للجوال -->
-            <div id="mobileMenu" class="hidden lg:hidden mt-4 pb-4 space-y-3">
-                <a href="#agenda" class="block py-2 text-slate-600 hover:text-blue-600 transition font-medium" onclick="toggleMobileMenu()">الأجندة</a>
-                <a href="#register" class="block py-2 text-slate-600 hover:text-blue-600 transition font-medium" onclick="toggleMobileMenu()">التسجيل</a>
-                <a href="#gallery" class="block py-2 text-slate-600 hover:text-blue-600 transition font-medium" onclick="toggleMobileMenu()">المعرض</a>
-                <a href="#live" class="block py-2 text-slate-600 hover:text-blue-600 transition font-medium" onclick="toggleMobileMenu()">المباشر</a>
-                <a href="#admin" class="block py-2 text-red-600 font-bold hover:bg-red-50 px-3 rounded-lg" onclick="toggleMobileMenu()">لوحة التحكم</a>
+            <div class="hidden md:flex space-x-reverse space-x-8 font-semibold">
+                <a href="#agenda" class="text-slate-600 hover:text-blue-600 transition">الأجندة</a>
+                <a href="#register" class="text-slate-600 hover:text-blue-600 transition">التسجيل</a>
+                <a href="#gallery" class="text-slate-600 hover:text-blue-600 transition">المعرض</a>
+                <a href="#admin-section" class="bg-red-50 text-red-600 px-4 py-1 rounded-full border border-red-100 hover:bg-red-600 hover:text-white transition">الإدارة</a>
             </div>
+            <button class="md:hidden text-2xl text-slate-800"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-    <!-- القسم الرئيسي -->
-    <section class="hero-gradient min-h-screen flex items-center pt-20 text-white relative overflow-hidden">
-        <div class="container mx-auto px-4 md:px-6 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <div class="inline-block bg-white/10 backdrop-blur-lg px-6 py-2 rounded-full mb-8 border border-white/20">
-                    <span class="text-sm font-medium">المؤتمر الهندسي الثاني</span>
-                </div>
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight">
-                    CIVIL<span class="text-blue-300">TCTH</span> 2
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-200 mb-12 max-w-2xl mx-auto">
-                    حيث تلتقي الهندسة بالتكنولوجيا في مدينة الخليل
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="#register" class="btn-primary text-lg">
-                        <i class="fas fa-user-plus ml-2"></i>سجل الآن
-                    </a>
-                    <a href="#gallery" class="btn-secondary text-lg bg-white/10 text-white border-white/20 hover:bg-white/20">
-                        <i class="fas fa-images ml-2"></i>استعرض المعرض
-                    </a>
-                </div>
-                
-                <!-- إحصائيات سريعة -->
-                <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mt-16">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-300" id="heroRegistrants">0</div>
-                        <div class="text-sm text-blue-200">مسجل</div>
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-[85vh] flex items-center pt-24 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <span class="bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full text-sm font-bold mb-6 inline-block border border-blue-500/30">تحت رعاية جامعة بوليتكنك فلسطين</span>
+            <h1 class="text-5xl md:text-8xl font-black mb-6 leading-tight">الهندسة المدنية <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">والتكنولوجيا الحديثة</span></h1>
+            <p class="text-xl md:text-2xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">المؤتمر الهندسي المتكامل في نسخته الثانية - الخليل 2025</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-5">
+                <a href="#register" class="bg-blue-600 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 transition shadow-[0_10px_20px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2">
+                    <i class="fas fa-user-plus"></i> سجل حضورك الآن
+                </a>
+                <a href="#gallery" class="bg-white/10 backdrop-blur-md border border-white/20 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-images"></i> معرض الصور
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agenda Section -->
+    <section id="agenda" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-extrabold text-center mb-4 section-title">أجندة المؤتمر</h2>
+            <p class="text-center text-slate-500 mb-16">تابع تفاصيل الفقرات والجلسات العلمية</p>
+            
+            <div class="grid lg:grid-cols-2 gap-16 max-w-7xl mx-auto">
+                <!-- Day 1 -->
+                <div class="fade-in">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-800">اليوم الأول <span class="text-sm font-normal text-slate-400 block mt-1">المواضيع التقنية والافتتاح</span></h3>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-300" id="heroSessions">0</div>
-                        <div class="text-sm text-blue-200">جلسة</div>
+                    <div id="agenda-day1" class="space-y-6 relative border-r-2 border-slate-100 pr-8">
+                        <!-- Items injected by JS -->
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-300" id="heroImages">0</div>
-                        <div class="text-sm text-blue-200">صورة</div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="fade-in" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-800">اليوم الثاني <span class="text-sm font-normal text-slate-400 block mt-1">المسابقات والعروض الختامية</span></h3>
+                    </div>
+                    <div id="agenda-day2" class="space-y-6 relative border-r-2 border-slate-100 pr-8">
+                        <!-- Items injected by JS -->
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- التغذية المباشرة -->
-    <section id="live" class="section-padding bg-gradient-to-b from-blue-50 to-white">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4">التغذية المباشرة</h2>
-                <p class="text-slate-600 text-lg">آخر التحديثات والتفاعلات من الحضور</p>
-            </div>
-            
-            <div class="max-w-3xl mx-auto">
-                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
-                    <div class="bg-gradient-to-l from-blue-600 to-blue-800 text-white p-5">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-rss text-xl"></i>
-                                <span class="font-bold">التحديثات المباشرة</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm bg-white/20 px-3 py-1 rounded-full" id="lastUpdate">
-                                    <i class="fas fa-sync-alt fa-spin ml-1"></i>تحديث
-                                </span>
-                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                            </div>
-                        </div>
+    <!-- Registration -->
+    <section id="register" class="py-24 bg-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-5xl mx-auto bg-white rounded-[3rem] shadow-2xl shadow-blue-900/5 overflow-hidden border border-slate-100">
+                <div class="grid md:grid-cols-5">
+                    <div class="md:col-span-2 bg-blue-700 p-12 text-white flex flex-col justify-center">
+                        <h2 class="text-3xl font-bold mb-6">انضم إلينا</h2>
+                        <p class="text-blue-100 mb-8 leading-relaxed">كن جزءاً من أكبر تجمع هندسي في فلسطين. احجز مقعدك الآن وشارك في الورشات والمسابقات.</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3"><i class="fas fa-check-circle text-blue-300"></i> شهادات حضور معتمدة</li>
+                            <li class="flex items-center gap-3"><i class="fas fa-check-circle text-blue-300"></i> جوائز نقدية للمسابقات</li>
+                            <li class="flex items-center gap-3"><i class="fas fa-check-circle text-blue-300"></i> تواصل مع شركات رائدة</li>
+                        </ul>
                     </div>
-                    
-                    <div id="liveActivities" class="h-96 overflow-y-auto p-5 space-y-3 bg-slate-50">
-                        <div class="text-center text-slate-400 py-12">
-                            <i class="fas fa-comments text-5xl mb-3 opacity-30"></i>
-                            <p>جاري تحميل النشاطات...</p>
-                        </div>
-                    </div>
-                    
-                    <div class="border-t p-5 bg-white">
-                        <form id="liveForm" class="flex gap-3">
-                            <input type="text" id="liveMessage" 
-                                   placeholder="شارك بتعليق أو سؤال..." 
-                                   class="flex-1 px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 transition"
-                                   maxlength="200">
-                            <button type="submit" 
-                                    class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
-                                <i class="fas fa-paper-plane"></i>
+                    <div class="md:col-span-3 p-12">
+                        <form id="regForm" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-slate-700 pr-2">الاسم الكامل</label>
+                                    <input type="text" id="fullName" required class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="أدخل اسمك الثلاثي">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-slate-700 pr-2">رقم التواصل</label>
+                                    <input type="tel" id="phone" required class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="05x-xxxxxxx">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-700 pr-2">البريد الإلكتروني</label>
+                                <input type="email" id="email" required class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="name@example.com">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-700 pr-2">المسار المطلوب</label>
+                                <select id="track" class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                    <option value="attendee">حضور جلسات المؤتمر</option>
+                                    <option value="bridge">مسابقة الجسور الخشبية</option>
+                                    <option value="hackathon">هكاثون التكنولوجيا المدنية</option>
+                                </select>
+                            </div>
+                            <button type="submit" id="regBtn" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-600 transition shadow-lg flex items-center justify-center gap-2">
+                                تأكيد تسجيل البيانات <i class="fas fa-paper-plane"></i>
                             </button>
                         </form>
-                        <div id="typingIndicator" class="typing-indicator hidden mt-3">
-                            <i class="fas fa-pencil-alt ml-2 text-slate-500"></i>
-                            <span class="text-slate-600">شخص يكتب...</span>
-                        </div>
+                        <div id="regStatus" class="mt-6 hidden text-center p-4 rounded-xl"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- الأجندة -->
-    <section id="agenda" class="section-padding bg-white">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4">أجندة المؤتمر</h2>
-                <p class="text-slate-600 text-lg">جدول الجلسات والفعاليات</p>
-            </div>
-            
-            <!-- شريط التقدم -->
-            <div class="max-w-4xl mx-auto mb-10">
-                <div class="flex justify-between text-sm text-slate-500 mb-2">
-                    <span>بداية المؤتمر</span>
-                    <span>التقدم: <span id="progressPercent">0</span>%</span>
-                    <span>نهاية المؤتمر</span>
-                </div>
-                <div class="progress-bar">
-                    <div id="agendaProgress" class="progress-fill" style="width: 0%"></div>
+    <!-- Gallery -->
+    <section id="gallery" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-extrabold text-center mb-4 section-title">معرض الصور</h2>
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex bg-slate-100 p-1.5 rounded-2xl">
+                    <button onclick="switchGallery('tech1')" id="tab-tech1" class="px-8 py-2.5 rounded-xl font-bold transition tab-active">النسخة الأولى</button>
+                    <button onclick="switchGallery('tech2')" id="tab-tech2" class="px-8 py-2.5 rounded-xl font-bold transition">النسخة الثانية</button>
                 </div>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                <!-- اليوم الأول -->
-                <div class="bg-slate-50 rounded-3xl p-6 card-hover">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-2xl font-bold text-blue-800">
-                            <i class="fas fa-sun ml-2"></i> اليوم الأول
-                        </h3>
-                        <span class="bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-bold" id="day1Count">0</span>
-                    </div>
-                    <div id="agenda-day1" class="space-y-4">
-                        <div class="text-center text-slate-400 py-8">
-                            <i class="fas fa-calendar-alt text-3xl mb-2 opacity-30"></i>
-                            <p>لا توجد فقرات بعد</p>
-                        </div>
+            <div id="gallery-tech1" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Static Placeholders -->
+                <div class="group relative overflow-hidden rounded-3xl h-64 bg-slate-200 card-hover">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                        <p class="text-white font-medium">افتتاح النسخة الأولى</p>
                     </div>
                 </div>
-                
-                <!-- اليوم الثاني -->
-                <div class="bg-slate-50 rounded-3xl p-6 card-hover">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-2xl font-bold text-indigo-800">
-                            <i class="fas fa-moon ml-2"></i> اليوم الثاني
-                        </h3>
-                        <span class="bg-indigo-100 text-indigo-800 px-4 py-1 rounded-full text-sm font-bold" id="day2Count">0</span>
+                <div class="group relative overflow-hidden rounded-3xl h-64 bg-slate-200 card-hover">
+                    <img src="https://images.unsplash.com/photo-1503387762-592dea58ef21?auto=format&fit=crop&w=600" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                        <p class="text-white font-medium">المشاريع الهندسية</p>
                     </div>
-                    <div id="agenda-day2" class="space-y-4">
-                        <div class="text-center text-slate-400 py-8">
-                            <i class="fas fa-calendar-alt text-3xl mb-2 opacity-30"></i>
-                            <p>لا توجد فقرات بعد</p>
-                        </div>
-                    </div>
+                </div>
+            </div>
+            
+            <div id="gallery-tech2" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[300px]">
+                <!-- Dynamic Content -->
+                <div id="empty-msg" class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+                    <i class="fas fa-camera-retro text-5xl mb-4"></i>
+                    <p class="italic">لم يتم رفع صور لهذا المؤتمر بعد</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- نموذج التسجيل -->
-    <section id="register" class="section-padding bg-gradient-to-b from-blue-50 to-white">
-        <div class="container mx-auto px-4 md:px-6 max-w-4xl">
-            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-blue-100">
-                <!-- رأس النموذج -->
-                <div class="bg-gradient-to-l from-blue-600 to-blue-800 text-white p-8 text-center">
-                    <i class="fas fa-user-plus text-5xl mb-4"></i>
-                    <h2 class="text-3xl font-bold mb-2">نموذج التسجيل</h2>
-                    <p class="text-blue-200">سجل الآن لحجز مقعدك في المؤتمر</p>
+    <!-- Admin Panel -->
+    <section id="admin-section" class="py-24 bg-slate-900 text-white">
+        <div class="container mx-auto px-6">
+            <div id="admin-login" class="max-w-md mx-auto text-center p-12 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10">
+                <div class="w-20 h-20 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fas fa-lock"></i>
                 </div>
-                
-                <!-- العداد المباشر -->
-                <div class="bg-blue-50 p-4 flex justify-center border-b">
-                    <div class="bg-white px-6 py-2 rounded-full shadow-sm">
-                        <i class="fas fa-users text-blue-600 ml-2"></i>
-                        <span class="font-bold">عدد المسجلين:</span>
-                        <span id="liveRegistrantCount" class="text-blue-600 font-bold mr-1">0</span>
-                    </div>
-                </div>
-                
-                <!-- النموذج -->
-                <form id="regForm" class="p-8 md:p-10 grid md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block">الاسم الكامل</label>
-                        <input type="text" id="fullName" required 
-                               class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 transition"
-                               placeholder="أدخل اسمك الثلاثي">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block">البريد الإلكتروني</label>
-                        <input type="email" id="email" required 
-                               class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 transition"
-                               placeholder="example@domain.com">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block">رقم الهاتف</label>
-                        <input type="tel" id="phone" required 
-                               class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 transition"
-                               placeholder="059xxxxxxxx">
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block">مسار المشاركة</label>
-                        <select id="track" class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 transition">
-                            <option value="attendee">حضور فقط</option>
-                            <option value="bridge">مسابقة الجسور</option>
-                            <option value="hackathon">هكاثون عين سارة</option>
-                        </select>
-                    </div>
-                    
-                    <button type="submit" id="regBtn" 
-                            class="md:col-span-2 btn-primary text-lg py-4">
-                        <i class="fas fa-check-circle ml-2"></i>
-                        تأكيد التسجيل
-                    </button>
-                </form>
+                <h2 class="text-3xl font-bold mb-2">منطقة المسؤول</h2>
+                <p class="text-slate-400 mb-8 italic">يرجى إدخال رمز الوصول للإدارة</p>
+                <input type="password" id="adminPass" placeholder="••••••" class="w-full bg-slate-800 border-none ring-1 ring-white/10 px-6 py-4 rounded-2xl mb-6 text-center text-2xl tracking-[1em] focus:ring-red-500 outline-none transition">
+                <button onclick="checkAdmin()" class="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-bold transition shadow-xl">تحقق من الهوية</button>
             </div>
-        </div>
-    </section>
 
-    <!-- معرض الصور -->
-    <section id="gallery" class="section-padding bg-white">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold mb-4">معرض الصور</h2>
-                <p class="text-slate-600 text-lg">لقطات من المؤتمر السابق والحالي</p>
-            </div>
-            
-            <!-- أزرار التبديل -->
-            <div class="flex justify-center gap-4 mb-10">
-                <button onclick="switchGallery('tech1')" 
-                        id="tab-tech1" 
-                        class="px-6 py-3 rounded-xl font-bold transition tab-active">
-                    <i class="fas fa-images ml-2"></i>
-                    المؤتمر الأول
-                </button>
-                <button onclick="switchGallery('tech2')" 
-                        id="tab-tech2" 
-                        class="px-6 py-3 rounded-xl font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200">
-                    <i class="fas fa-camera ml-2"></i>
-                    المؤتمر الثاني (الحالي)
-                </button>
-            </div>
-            
-            <!-- صور المؤتمر الأول -->
-            <div id="gallery-tech1" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400" class="w-full h-48 object-cover">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1503387762-592dea58ef21?w=400" class="w-full h-48 object-cover">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400" class="w-full h-48 object-cover">
-                </div>
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1503387762-592dea58ef21?w=400" class="w-full h-48 object-cover">
-                </div>
-            </div>
-            
-            <!-- صور المؤتمر الثاني -->
-            <div id="gallery-tech2" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4">
-                <p id="empty-msg" class="col-span-full text-center text-slate-400 py-16">
-                    <i class="fas fa-cloud-upload-alt text-5xl mb-3 opacity-30"></i>
-                    <br>لم يتم رفع صور بعد...
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- لوحة تحكم المسؤول -->
-    <section id="admin" class="section-padding bg-slate-100">
-        <div class="container mx-auto px-4 md:px-6">
-            <!-- شاشة تسجيل الدخول -->
-            <div id="admin-login" class="max-w-md mx-auto text-center">
-                <div class="bg-white rounded-3xl p-8 shadow-xl border border-red-100">
-                    <div class="w-20 h-20 bg-red-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                        <i class="fas fa-crown text-red-600 text-3xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-6 text-red-800">لوحة تحكم المسؤول</h2>
-                    <input type="password" id="adminPass" placeholder="كلمة المرور" 
-                           class="w-full px-5 py-3 rounded-xl border-2 border-slate-200 mb-4 text-center">
-                    <button onclick="checkAdmin()" 
-                            class="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition shadow-lg">
-                        <i class="fas fa-lock-open ml-2"></i>
-                        دخول
+            <div id="admin-content" class="hidden space-y-10">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+                    <h2 class="text-4xl font-black">لوحة الإدارة <span class="text-blue-500">Live</span></h2>
+                    <button onclick="logoutAdmin()" class="bg-white/10 hover:bg-red-600 px-6 py-2 rounded-xl transition flex items-center gap-2 border border-white/10">
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
                     </button>
                 </div>
-            </div>
 
-            <!-- محتوى لوحة التحكم -->
-            <div id="admin-content" class="hidden space-y-8">
-                <!-- الإحصائيات -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="stat-card">
-                        <i class="fas fa-users text-3xl text-blue-600 mb-2"></i>
-                        <div class="text-3xl font-bold text-blue-600" id="adminLiveCount">0</div>
-                        <div class="text-sm text-slate-500">متصلاً الآن</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-user-check text-3xl text-green-600 mb-2"></i>
-                        <div class="text-3xl font-bold text-green-600" id="adminRegCount">0</div>
-                        <div class="text-sm text-slate-500">مسجل</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-image text-3xl text-purple-600 mb-2"></i>
-                        <div class="text-3xl font-bold text-purple-600" id="adminPhotoCount">0</div>
-                        <div class="text-sm text-slate-500">صورة</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-clock text-3xl text-orange-600 mb-2"></i>
-                        <div class="text-3xl font-bold text-orange-600" id="adminSessionCount">0</div>
-                        <div class="text-sm text-slate-500">جلسة</div>
-                    </div>
-                </div>
-
-                <!-- إدارة الأجندة -->
-                <div class="admin-card">
-                    <h3 class="text-2xl font-bold mb-6 text-green-800">
-                        <i class="fas fa-calendar-plus ml-2"></i>
-                        إدارة الأجندة
-                    </h3>
-                    <form id="agendaForm" class="grid md:grid-cols-4 gap-4 mb-8">
-                        <input type="text" id="agendaTitle" placeholder="عنوان الفقرة" required 
-                               class="px-4 py-3 rounded-xl border-2 border-slate-200">
-                        <input type="time" id="agendaTime" required 
-                               class="px-4 py-3 rounded-xl border-2 border-slate-200">
-                        <select id="agendaDay" class="px-4 py-3 rounded-xl border-2 border-slate-200">
-                            <option value="1">اليوم الأول</option>
-                            <option value="2">اليوم الثاني</option>
-                        </select>
-                        <button type="submit" id="agendaBtn" 
-                                class="bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition">
-                            <i class="fas fa-plus ml-2"></i>
-                            إضافة
-                        </button>
-                    </form>
-                    
-                    <div id="agendaList" class="space-y-2 max-h-80 overflow-y-auto p-2 bg-slate-50 rounded-xl">
-                        <p class="text-center text-slate-400 py-4">لا توجد فقرات مضافة</p>
-                    </div>
-                </div>
-
-                <!-- رفع الصور -->
-                <div class="admin-card">
-                    <h3 class="text-2xl font-bold mb-6 text-blue-800">
-                        <i class="fas fa-cloud-upload-alt ml-2"></i>
-                        رفع صور المؤتمر الثاني
-                    </h3>
-                    <form id="uploadForm" class="space-y-4">
-                        <div id="dropZone" class="upload-area p-8 text-center rounded-2xl">
-                            <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
-                            <div id="uploadPrompt">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-3"></i>
-                                <br>
-                                <span class="font-medium">إضغط أو أسحب الصورة هنا</span>
-                                <p class="text-sm text-slate-500 mt-2">JPG, PNG, GIF حتى 5MB</p>
+                <div class="grid lg:grid-cols-2 gap-10">
+                    <!-- Agenda Manager -->
+                    <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/10">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                            <i class="fas fa-calendar-plus text-green-500"></i> تنظيم الأجندة
+                        </h3>
+                        <form id="agendaForm" class="space-y-4">
+                            <input type="text" id="agendaTitle" placeholder="عنوان الفقرة أو الجلسة" required class="w-full bg-slate-800 border-none px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="time" id="agendaTime" required class="w-full bg-slate-800 border-none px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                                <select id="agendaDay" class="w-full bg-slate-800 border-none px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-green-500">
+                                    <option value="1">اليوم الأول</option>
+                                    <option value="2">اليوم الثاني</option>
+                                </select>
                             </div>
-                            <img id="imgPreview" class="hidden max-h-48 mx-auto mt-4 rounded-xl shadow-lg">
-                        </div>
-                        <input type="text" id="upCaption" placeholder="وصف الصورة (اختياري)" 
-                               class="w-full px-4 py-3 rounded-xl border-2 border-slate-200">
-                        <button type="submit" id="upBtn" 
-                                class="w-full bg-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-800 transition">
-                            <i class="fas fa-upload ml-2"></i>
-                            نشر الصورة
-                        </button>
-                    </form>
+                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 py-4 rounded-xl font-bold transition">نشر في الموقع</button>
+                        </form>
+                    </div>
+
+                    <!-- Photo Uploader -->
+                    <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/10">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                            <i class="fas fa-cloud-upload-alt text-blue-500"></i> مركز الرفع
+                        </h3>
+                        <form id="uploadForm" class="space-y-4">
+                            <div id="dropZone" class="upload-area h-48 flex flex-col items-center justify-center rounded-2xl bg-slate-800/50 hover:bg-slate-800 transition group cursor-pointer">
+                                <input type="file" id="fileInput" accept="image/*" class="hidden">
+                                <div id="uploadPrompt" class="text-center group-hover:scale-110 transition duration-300">
+                                    <i class="fas fa-image text-4xl mb-2 text-slate-500"></i>
+                                    <p class="text-slate-400">اضغط لرفع صورة</p>
+                                </div>
+                                <img id="imgPreview" class="hidden h-full w-full object-cover rounded-2xl">
+                            </div>
+                            <input type="text" id="upCaption" placeholder="وصف الصورة (اختياري)" class="w-full bg-slate-800 border-none px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold transition">نشر في المعرض</button>
+                        </form>
+                    </div>
                 </div>
 
-                <!-- قائمة المسجلين -->
-                <div class="admin-card">
-                    <h3 class="text-2xl font-bold mb-6">
-                        <i class="fas fa-list ml-2"></i>
-                        قائمة المسجلين (<span id="totalCount">0</span>)
-                    </h3>
+                <!-- Stats Table -->
+                <div class="bg-white/5 p-10 rounded-[2.5rem] border border-white/10">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-2xl font-bold">قائمة الحضور</h3>
+                        <div class="bg-blue-600 px-4 py-1 rounded-full text-sm font-bold">إجمالي: <span id="totalCount">0</span></div>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right">
-                            <thead class="bg-slate-50 border-b">
+                            <thead class="bg-white/5">
                                 <tr>
-                                    <th class="p-3">الاسم</th>
-                                    <th class="p-3">البريد</th>
-                                    <th class="p-3">الهاتف</th>
-                                    <th class="p-3">المسار</th>
-                                    <th class="p-3"></th>
+                                    <th class="p-5 font-bold rounded-r-2xl">الاسم</th>
+                                    <th class="p-5 font-bold">التواصل</th>
+                                    <th class="p-5 font-bold">المسار</th>
+                                    <th class="p-5 font-bold rounded-l-2xl text-center">التحكم</th>
                                 </tr>
                             </thead>
-                            <tbody id="registrantsTable" class="divide-y"></tbody>
+                            <tbody id="registrantsTable" class="divide-y divide-white/5">
+                                <!-- Data injected by JS -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
-                
-                <div class="text-center">
-                    <button onclick="logoutAdmin()" 
-                            class="text-red-600 font-bold underline hover:text-red-800 transition">
-                        <i class="fas fa-sign-out-alt ml-2"></i>
-                        تسجيل الخروج
-                    </button>
-                </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-slate-900 text-white py-12 text-center">
-        <div class="container mx-auto px-4">
-            <div class="w-16 h-16 bg-blue-600/20 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                <i class="fas fa-microchip text-blue-400 text-3xl"></i>
+    <footer class="bg-slate-950 text-slate-500 py-16 text-center border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="mb-8">
+                <span class="text-2xl font-black text-white">CIVILTCTH 2</span>
             </div>
-            <p class="text-lg font-bold mb-2">CIVILTCTH 2</p>
-            <p class="text-slate-400 text-sm">© 2025 كلية الهندسة والتكنولوجيا - جامعة الخليل</p>
+            <p class="max-w-md mx-auto mb-8">جميع الحقوق محفوظة © 2025 - لجنة التنظيم المركزية لمؤتمر الهندسة والتكنولوجيا الحديثة.</p>
+            <div class="flex justify-center gap-6 text-xl">
+                <a href="#" class="hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
     </footer>
 
-    <!-- Firebase Config -->
-    <script>
-        window.__firebase_config = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        window.__app_id = 'civiltcth2-main-v1';
-    </script>
-
-    <!-- Main Script -->
+    <!-- Firebase Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp, limit, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, onValue, set, push, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-        // تهيئة Firebase
-        const app = initializeApp(window.__firebase_config);
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const rtdb = getDatabase(app);
         const auth = getAuth(app);
-        const appId = window.__app_id;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'civiltcth2-advanced-v2';
 
-        // متغيرات عامة
-        let currentUser = null;
-        let userId = null;
-        let typingTimeout = null;
-
-        // دوال مساعدة
-        function showNotification(message, isSuccess = true) {
-            const notification = document.getElementById('notification');
-            const messageEl = document.getElementById('notificationMessage');
-            
-            if(notification && messageEl) {
-                messageEl.innerText = message;
-                notification.classList.remove('hidden', 'error');
-                if(!isSuccess) notification.classList.add('error');
-                
-                setTimeout(() => {
-                    notification.classList.add('hidden');
-                }, 3000);
-            }
-        }
-
-        function showSuccess(message) {
-            showNotification(message, true);
-        }
-
-        function showError(message) {
-            showNotification(message, false);
-        }
-
-        // قائمة الجوال
-        window.toggleMobileMenu = () => {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        };
-
-        // المصادقة
-        signInAnonymously(auth).catch(error => {
-            console.error("Auth error:", error);
-            showError("خطأ في الاتصال");
-        });
-        
-        onAuthStateChanged(auth, (user) => {
+        // Auth
+        signInAnonymously(auth);
+        onAuthStateChanged(auth, user => {
             if(user) {
-                currentUser = user;
-                userId = user.uid;
-                
-                // تسجيل التواجد
-                const statusRef = ref(rtdb, 'status/' + userId);
-                const connectedRef = ref(rtdb, '.info/connected');
-                
-                onValue(connectedRef, (snap) => {
-                    if(snap.val() === true) {
-                        set(statusRef, {
-                            online: true,
-                            lastSeen: Date.now(),
-                            lastActive: Date.now()
-                        });
-                        
-                        onDisconnect(statusRef).set({
-                            online: false,
-                            lastSeen: Date.now()
-                        });
-                    }
-                });
-                
-                // مراقبة عدد المتصلين
-                const onlineRef = ref(rtdb, 'status');
-                onValue(onlineRef, (snap) => {
-                    let count = 0;
-                    snap.forEach(child => {
-                        if(child.val().online) count++;
-                    });
-                    
-                    document.getElementById('onlineCount').innerText = count;
-                    document.getElementById('adminLiveCount').innerText = count;
-                    document.getElementById('onlineUsers').classList.remove('hidden');
-                });
-                
-                // بدء المزامنة
-                syncLiveFeed();
-                syncAgenda();
-                syncGallery();
-                syncRegistrants();
-                syncStats();
-                initTyping();
+                initRealtimeSync();
             }
         });
 
-        // التغذية المباشرة
-        function syncLiveFeed() {
-            const q = query(
-                collection(db, 'artifacts', appId, 'public', 'data', 'activities'),
-                orderBy('createdAt', 'desc'),
-                limit(50)
-            );
-            
-            onSnapshot(q, (snap) => {
-                const container = document.getElementById('liveActivities');
-                const lastUpdate = document.getElementById('lastUpdate');
-                
-                if(!container) return;
-                
-                lastUpdate.innerHTML = '<i class="fas fa-check ml-1"></i>' + 
-                    new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
-                
-                if(snap.empty) {
-                    container.innerHTML = '<div class="text-center text-slate-400 py-12"><i class="fas fa-comments text-5xl mb-3 opacity-30"></i><p>لا توجد تحديثات بعد</p></div>';
-                    return;
-                }
-                
-                container.innerHTML = '';
-                snap.forEach(doc => {
-                    const activity = doc.data();
-                    const time = activity.createdAt?.toDate ? 
-                        activity.createdAt.toDate().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}) : 
-                        'الآن';
-                    
-                    const div = document.createElement('div');
-                    div.className = "bg-white p-4 rounded-xl shadow-sm border-r-4 border-blue-500 fade-in live-activity";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="font-bold text-blue-800">${activity.user || 'مشارك'}</span>
-                                <p class="text-slate-700 mt-1">${activity.message}</p>
-                            </div>
-                            <span class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">${time}</span>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-                
-                container.scrollTop = 0;
-            });
+        function initRealtimeSync() {
+            syncAgenda();
+            syncGallery();
+            syncRegistrants();
         }
 
-        // مراقبة الكتابة
-        function initTyping() {
-            const input = document.getElementById('liveMessage');
-            if(!input) return;
-            
-            input.addEventListener('input', () => {
-                if(!userId) return;
-                
-                const typingRef = ref(rtdb, 'typing/' + userId);
-                set(typingRef, { isTyping: true, timestamp: Date.now() });
-                
-                clearTimeout(typingTimeout);
-                typingTimeout = setTimeout(() => {
-                    set(typingRef, { isTyping: false });
-                }, 2000);
-            });
-            
-            // مراقبة الآخرين
-            const typingRef = ref(rtdb, 'typing');
-            onValue(typingRef, (snap) => {
-                let count = 0;
-                snap.forEach(child => {
-                    if(child.val().isTyping && child.key !== userId) count++;
-                });
-                
-                const indicator = document.getElementById('typingIndicator');
-                if(indicator) {
-                    if(count > 0) {
-                        indicator.classList.remove('hidden');
-                        indicator.innerHTML = count === 1 ? 
-                            '<i class="fas fa-pencil-alt ml-2 text-slate-500"></i><span class="text-slate-600">شخص يكتب...</span>' : 
-                            `<i class="fas fa-pencil-alt ml-2 text-slate-500"></i><span class="text-slate-600">${count} أشخاص يكتبون...</span>`;
-                    } else {
-                        indicator.classList.add('hidden');
-                    }
-                }
-            });
-        }
-
-        // إرسال رسالة حية
-        document.getElementById('liveForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const message = document.getElementById('liveMessage').value.trim();
-            if(!message) return;
-            
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                    message: message,
-                    user: 'مشارك',
-                    userId: userId,
-                    createdAt: serverTimestamp()
-                });
-                
-                e.target.reset();
-                showSuccess('تم نشر تعليقك');
-                
-                if(userId) {
-                    set(ref(rtdb, 'typing/' + userId), { isTyping: false });
-                }
-                
-            } catch(error) {
-                console.error(error);
-                showError('فشل في النشر');
-            }
-        });
-
-        // الأجندة
-        document.getElementById('agendaForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById('agendaTitle').value;
-            const time = document.getElementById('agendaTime').value;
-            const day = document.getElementById('agendaDay').value;
-            
-            if(!title || !time) return;
-            
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), {
-                    title: title,
-                    time: time,
-                    day: day,
-                    createdAt: serverTimestamp()
-                });
-                
-                // إضافة نشاط
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                    message: `تم إضافة فقرة جديدة: ${title}`,
-                    user: 'المسؤول',
-                    userId: 'admin',
-                    createdAt: serverTimestamp()
-                });
-                
-                e.target.reset();
-                showSuccess('تم إضافة الفقرة');
-                
-            } catch(error) {
-                console.error(error);
-                showError('فشلت الإضافة');
-            }
-        });
-
+        // --- Agenda Sync ---
         function syncAgenda() {
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), orderBy('time'));
-            
-            onSnapshot(q, (snap) => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), (snap) => {
                 const day1 = document.getElementById('agenda-day1');
                 const day2 = document.getElementById('agenda-day2');
-                const agendaList = document.getElementById('agendaList');
-                const day1Count = document.getElementById('day1Count');
-                const day2Count = document.getElementById('day2Count');
-                const heroSessions = document.getElementById('heroSessions');
+                day1.innerHTML = ''; day2.innerHTML = '';
                 
-                let count1 = 0, count2 = 0;
-                
-                if(day1) day1.innerHTML = '';
-                if(day2) day2.innerHTML = '';
-                if(agendaList) agendaList.innerHTML = '';
+                const items = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                items.sort((a,b) => (a.time || '').localeCompare(b.time || ''));
 
-                snap.forEach(doc => {
-                    const item = {id: doc.id, ...doc.data()};
-                    
-                    if(item.day == "1") count1++;
-                    else count2++;
-                    
-                    // عرض في الصفحة الرئيسية
-                    if(day1 && day2) {
-                        const div = document.createElement('div');
-                        div.className = "bg-white p-4 rounded-xl shadow-sm border-r-4 fade-in " + 
-                            (item.day == "1" ? "border-blue-500" : "border-indigo-500");
-                        div.innerHTML = `
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">${item.time}</span>
-                                <p class="font-bold text-slate-800">${item.title}</p>
-                            </div>
-                        `;
-                        
-                        if(item.day == "1") day1.appendChild(div);
-                        else day2.appendChild(div);
-                    }
-                    
-                    // عرض في لوحة التحكم
-                    if(agendaList) {
-                        const div = document.createElement('div');
-                        div.className = "flex justify-between items-center p-3 bg-white rounded-lg hover:bg-slate-50 transition border";
-                        div.innerHTML = `
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = "group relative p-6 bg-slate-50 rounded-2xl border-r-4 " + 
+                                     (item.day == "1" ? "border-blue-500" : "border-indigo-500") + 
+                                     " flex justify-between items-center transition hover:bg-white hover:shadow-md";
+                    card.innerHTML = `
+                        <div class="flex items-center gap-5">
+                            <span class="text-blue-600 font-bold bg-white px-3 py-1 rounded-lg shadow-sm border border-slate-100">${item.time}</span>
                             <div>
-                                <span class="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded ml-2">${item.time}</span>
-                                <span class="font-medium">${item.title}</span>
-                                <span class="text-xs text-slate-500 mr-2">(اليوم ${item.day == "1" ? 'الأول' : 'الثاني'})</span>
+                                <h4 class="font-bold text-slate-800 text-lg">${item.title}</h4>
                             </div>
-                            <button onclick="deleteAgendaItem('${item.id}')" class="text-red-500 hover:text-red-700 p-2">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        `;
-                        agendaList.appendChild(div);
-                    }
+                        </div>
+                        ${!document.getElementById('admin-content').classList.contains('hidden') ? 
+                          `<button onclick="window.deleteData('agenda', '${item.id}')" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash-alt"></i></button>` : ''}
+                    `;
+                    if(item.day == "1") day1.appendChild(card);
+                    else day2.appendChild(card);
                 });
-                
-                if(day1Count) day1Count.innerText = count1;
-                if(day2Count) day2Count.innerText = count2;
-                if(heroSessions) heroSessions.innerText = count1 + count2;
-                if(document.getElementById('adminSessionCount')) 
-                    document.getElementById('adminSessionCount').innerText = count1 + count2;
-                
-                updateProgress(count1 + count2);
             });
         }
 
-        function updateProgress(total) {
-            const now = new Date();
-            const currentTime = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-            
-            let passed = 0;
-            document.querySelectorAll('#agenda-day1 .border-r-4, #agenda-day2 .border-r-4').forEach(item => {
-                const timeSpan = item.querySelector('span');
-                if(timeSpan && timeSpan.innerText < currentTime) passed++;
-            });
-            
-            const percent = total > 0 ? Math.round((passed / total) * 100) : 0;
-            const progressBar = document.getElementById('agendaProgress');
-            const percentSpan = document.getElementById('progressPercent');
-            
-            if(progressBar) progressBar.style.width = `${percent}%`;
-            if(percentSpan) percentSpan.innerText = percent;
-        }
-
-        // حذف من الأجندة
-        window.deleteAgendaItem = async (id) => {
-            if(!confirm('تأكيد حذف الفقرة؟')) return;
-            
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'agenda', id));
-                showSuccess('تم الحذف');
-            } catch(error) {
-                console.error(error);
-                showError('فشل الحذف');
-            }
-        };
-
-        // معرض الصور
-        window.switchGallery = (type) => {
-            const tech1 = document.getElementById('gallery-tech1');
-            const tech2 = document.getElementById('gallery-tech2');
-            const tab1 = document.getElementById('tab-tech1');
-            const tab2 = document.getElementById('tab-tech2');
-            
-            if(tech1 && tech2) {
-                tech1.classList.toggle('hidden', type !== 'tech1');
-                tech2.classList.toggle('hidden', type !== 'tech2');
-            }
-            
-            if(tab1 && tab2) {
-                if(type === 'tech1') {
-                    tab1.classList.add('tab-active');
-                    tab2.classList.remove('tab-active');
-                    tab2.classList.add('bg-slate-100', 'text-slate-600');
-                } else {
-                    tab2.classList.add('tab-active');
-                    tab1.classList.remove('tab-active');
-                    tab1.classList.add('bg-slate-100', 'text-slate-600');
-                }
-            }
-        };
-
-        // رفع الصور
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        
-        if(dropZone) {
-            dropZone.addEventListener('click', () => fileInput.click());
-            
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
-            
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('dragover');
-            });
-            
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                
-                const files = e.dataTransfer.files;
-                if(files.length > 0) handleImageSelect(files[0]);
-            });
-        }
-
-        fileInput?.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) handleImageSelect(e.target.files[0]);
-        });
-
-        function handleImageSelect(file) {
-            if(!file.type.startsWith('image/')) {
-                showError('الملف يجب أن يكون صورة');
-                return;
-            }
-            
-            if(file.size > 5 * 1024 * 1024) {
-                showError('حجم الصورة يجب أن أقل من 5MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const preview = document.getElementById('imgPreview');
-                const prompt = document.getElementById('uploadPrompt');
-                
-                if(preview && prompt) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    prompt.innerHTML = '<i class="fas fa-check-circle text-green-500 text-3xl"></i><br><span class="font-medium">تم اختيار الصورة</span>';
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        document.getElementById('uploadForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const preview = document.getElementById('imgPreview');
-            const caption = document.getElementById('upCaption').value;
-            
-            if(!preview || !preview.src || preview.src === '') {
-                showError('اختر صورة أولاً');
-                return;
-            }
-            
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), {
-                    image: preview.src,
-                    caption: caption || 'صورة من المؤتمر',
-                    createdAt: serverTimestamp()
-                });
-                
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                    message: `تم إضافة صورة جديدة: ${caption || 'من المؤتمر'}`,
-                    user: 'المسؤول',
-                    userId: 'admin',
-                    createdAt: serverTimestamp()
-                });
-                
-                // إعادة تعيين النموذج
-                e.target.reset();
-                preview.classList.add('hidden');
-                document.getElementById('uploadPrompt').innerHTML = '<i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-3"></i><br><span class="font-medium">إضغط أو أسحب الصورة هنا</span><p class="text-sm text-slate-500 mt-2">JPG, PNG, GIF حتى 5MB</p>';
-                
-                showSuccess('تم رفع الصورة');
-                
-            } catch(error) {
-                console.error(error);
-                showError('فشل الرفع');
-            }
-        });
-
+        // --- Gallery Sync ---
         function syncGallery() {
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), orderBy('createdAt', 'desc'));
-            
-            onSnapshot(q, (snap) => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), (snap) => {
                 const grid = document.getElementById('gallery-tech2');
                 const empty = document.getElementById('empty-msg');
-                const heroImages = document.getElementById('heroImages');
-                
-                if(!grid) return;
-                
-                const docs = snap.docs.map(d => d.data());
-                
-                if(heroImages) heroImages.innerText = docs.length;
-                if(document.getElementById('adminPhotoCount')) 
-                    document.getElementById('adminPhotoCount').innerText = docs.length;
+                const docs = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 
                 if(docs.length > 0) {
-                    if(empty) empty.classList.add('hidden');
+                    empty.classList.add('hidden');
                     grid.innerHTML = '';
-                    
-                    docs.forEach(img => {
-                        const div = document.createElement('div');
-                        div.className = "gallery-item";
-                        div.innerHTML = `
-                            <img src="${img.image}" class="w-full h-48 object-cover">
-                            <div class="overlay">
-                                <p class="text-sm">${img.caption || 'صورة من المؤتمر'}</p>
-                            </div>
-                        `;
-                        div.onclick = () => window.open(img.image, '_blank');
-                        grid.appendChild(div);
+                    docs.forEach(p => {
+                        grid.innerHTML += `
+                            <div class="group relative overflow-hidden rounded-3xl h-64 bg-slate-200 card-hover shadow-lg">
+                                <img src="${p.image}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-6">
+                                    <p class="text-white font-medium mb-3">${p.caption || 'بدون وصف'}</p>
+                                    ${!document.getElementById('admin-content').classList.contains('hidden') ? 
+                                    `<button onclick="window.deleteData('gallery_v2', '${p.id}')" class="bg-red-600 text-white w-full py-2 rounded-xl text-sm font-bold shadow-lg"><i class="fas fa-trash"></i> حذف الصورة</button>` : ''}
+                                </div>
+                            </div>`;
                     });
                 } else {
-                    if(empty) empty.classList.remove('hidden');
+                    empty.classList.remove('hidden');
+                    grid.innerHTML = '<div id="empty-msg" class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20"><i class="fas fa-camera-retro text-5xl mb-4"></i><p class="italic">لم يتم رفع صور مؤخراً</p></div>';
                 }
             });
         }
 
-        // التسجيل
-        document.getElementById('regForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const track = document.getElementById('track').value;
-            
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), {
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    track: track,
-                    createdAt: serverTimestamp()
-                });
-                
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                    message: `تسجيل جديد: ${name}`,
-                    user: 'نظام التسجيل',
-                    userId: 'system',
-                    createdAt: serverTimestamp()
-                });
-                
-                e.target.reset();
-                showSuccess('تم تسجيلك بنجاح');
-                
-            } catch(error) {
-                console.error(error);
-                showError('فشل التسجيل');
-            }
-        });
-
+        // --- Registrants Sync ---
         function syncRegistrants() {
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), orderBy('createdAt', 'desc'));
-            
-            onSnapshot(q, (snap) => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), (snap) => {
                 const list = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                const count = list.length;
-                
-                document.getElementById('totalCount').innerText = count;
-                document.getElementById('liveRegistrantCount').innerText = count;
-                document.getElementById('heroRegistrants').innerText = count;
-                document.getElementById('adminRegCount').innerText = count;
-                
+                document.getElementById('totalCount').innerText = list.length;
                 const table = document.getElementById('registrantsTable');
-                if(!table) return;
-                
                 table.innerHTML = '';
-                list.forEach(r => {
+                list.sort((a,b) => (b.time || 0) - (a.time || 0)).forEach(r => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition";
+                    tr.className = "hover:bg-white/5 transition group";
                     tr.innerHTML = `
-                        <td class="p-3 font-medium">${r.name || ''}</td>
-                        <td class="p-3 text-slate-600">${r.email || ''}</td>
-                        <td class="p-3 text-slate-600">${r.phone || ''}</td>
-                        <td class="p-3"><span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-sm">${r.track || 'حضور'}</span></td>
-                        <td class="p-3">
-                            <button class="text-red-500 hover:text-red-700 delete-btn" data-id="${r.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <td class="p-5 font-bold text-white">${r.name}</td>
+                        <td class="p-5 text-slate-400">${r.phone}</td>
+                        <td class="p-5"><span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-bold">${r.track}</span></td>
+                        <td class="p-5 text-center">
+                            <button onclick="window.deleteData('registrants', '${r.id}')" class="text-slate-600 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     `;
                     table.appendChild(tr);
                 });
-                
-                // حذف
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        if(!confirm('تأكيد حذف هذا التسجيل؟')) return;
-                        
-                        try {
-                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'registrants', btn.dataset.id));
-                            showSuccess('تم الحذف');
-                        } catch(error) {
-                            console.error(error);
-                            showError('فشل الحذف');
-                        }
-                    });
-                });
             });
         }
 
-        function syncStats() {
-            // إحصائيات إضافية
-        }
-
-        // دخول المسؤول
-        window.checkAdmin = () => {
-            const pass = document.getElementById('adminPass').value;
-            if(pass === "123456") {
-                document.getElementById('admin-login').classList.add('hidden');
-                document.getElementById('admin-content').classList.remove('hidden');
-                
-                addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                    message: 'دخل المسؤول إلى لوحة التحكم',
-                    user: 'نظام',
-                    userId: 'system',
-                    createdAt: serverTimestamp()
-                }).catch(console.error);
-                
-            } else {
-                showError('كلمة المرور خاطئة');
+        // Global Operations
+        window.deleteData = async (col, id) => {
+            if(confirm("هل أنت متأكد من الحذف النهائي؟")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id));
             }
         };
-        
+
+        // Form Handlers
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('regBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التسجيل...';
+            btn.disabled = true;
+            
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), {
+                    name: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    track: document.getElementById('track').value,
+                    time: Date.now()
+                });
+                
+                const status = document.getElementById('regStatus');
+                status.className = "mt-6 p-4 rounded-xl bg-green-500/10 text-green-600 font-bold block";
+                status.innerHTML = '<i class="fas fa-check-circle ml-2"></i> تم تسجيلك بنجاح! ننتظر حضورك.';
+                e.target.reset();
+            } catch(err) {
+                console.error(err);
+                alert("حدث خطأ في الاتصال، حاول مرة أخرى.");
+            }
+            btn.innerHTML = 'تأكيد تسجيل البيانات <i class="fas fa-paper-plane"></i>';
+            btn.disabled = false;
+        };
+
+        document.getElementById('agendaForm').onsubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), {
+                title: document.getElementById('agendaTitle').value,
+                time: document.getElementById('agendaTime').value,
+                day: document.getElementById('agendaDay').value
+            });
+            e.target.reset();
+        };
+
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const img = document.getElementById('imgPreview').src;
+            if(!img || img.length < 500) return alert("يرجى اختيار صورة أولاً");
+            
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), {
+                image: img,
+                caption: document.getElementById('upCaption').value,
+                time: Date.now()
+            });
+            
+            e.target.reset();
+            document.getElementById('imgPreview').classList.add('hidden');
+            document.getElementById('uploadPrompt').classList.remove('hidden');
+        };
+
+        // File/Image Preview
+        const fileInput = document.getElementById('fileInput');
+        document.getElementById('dropZone').onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                if(file.size > 2 * 1024 * 1024) return alert("حجم الصورة كبير جداً (أقل من 2MB)");
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('imgPreview').src = ev.target.result;
+                    document.getElementById('imgPreview').classList.remove('hidden');
+                    document.getElementById('uploadPrompt').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // UI Helpers
+        window.switchGallery = (type) => {
+            document.getElementById('gallery-tech1').classList.toggle('hidden', type !== 'tech1');
+            document.getElementById('gallery-tech2').classList.toggle('hidden', type !== 'tech2');
+            document.getElementById('tab-tech1').className = "px-8 py-2.5 rounded-xl font-bold transition " + (type === 'tech1' ? "bg-white shadow text-blue-600" : "text-slate-500");
+            document.getElementById('tab-tech2').className = "px-8 py-2.5 rounded-xl font-bold transition " + (type === 'tech2' ? "bg-white shadow text-blue-600" : "text-slate-500");
+        };
+
+        window.checkAdmin = () => {
+            if(document.getElementById('adminPass').value === "123456") {
+                document.getElementById('admin-login').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                initRealtimeSync();
+            } else {
+                alert("رمز الوصول غير صحيح!");
+            }
+        };
+
         window.logoutAdmin = () => {
             document.getElementById('admin-login').classList.remove('hidden');
             document.getElementById('admin-content').classList.add('hidden');
             document.getElementById('adminPass').value = '';
-            
-            addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'activities'), {
-                message: 'خرج المسؤول من لوحة التحكم',
-                user: 'نظام',
-                userId: 'system',
-                createdAt: serverTimestamp()
-            }).catch(console.error);
+            initRealtimeSync();
         };
 
-        // تحديث التقدم كل دقيقة
-        setInterval(() => {
-            const total = parseInt(document.getElementById('day1Count')?.innerText || 0) + 
-                         parseInt(document.getElementById('day2Count')?.innerText || 0);
-            updateProgress(total);
-        }, 60000);
+        // Init tabs
+        switchGallery('tech1');
     </script>
 </body>
 </html>
