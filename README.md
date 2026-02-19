@@ -1,306 +1,338 @@
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
-import { Timer, Users, Trophy, LayoutDashboard, Send, CheckCircle, Lock, ShieldCheck } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVILTCTH 2 | المؤتمر الهندسي المتكامل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .upload-area { border: 2px dashed #cbd5e1; transition: all 0.3s; cursor: pointer; }
+        .upload-area:hover { border-color: #3b82f6; background: #eff6ff; }
+        .section-padding { padding-top: 5rem; padding-bottom: 5rem; }
+        .tab-active { border-bottom: 4px solid #3b82f6; color: #1e40af; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
 
-// Firebase Configuration
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'civil-tech-2024';
-
-const CONFERENCE_DATE = new Date('2024-12-30T09:00:00').getTime();
-const ADMIN_PASSCODE = "1234"; // يمكنك تغيير رمز الدخول من هنا
-
-export default function App() {
-  const [user, setUser] = useState(null);
-  const [view, setView] = useState('home'); 
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
-  const [passcodeInput, setPasscodeInput] = useState('');
-  const [timeLeft, setTimeLeft] = useState({});
-  const [formData, setFormData] = useState({ name: '', email: '', competition: 'الابتكار الهندسي', phone: '' });
-  const [submissions, setSubmissions] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState(false);
-  const [adminError, setAdminError] = useState('');
-
-  // Auth logic
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        await signInAnonymously(auth);
-      } catch (error) {
-        console.error("Auth error:", error);
-      }
-    };
-    initAuth();
-    const unsubscribe = onAuthStateChanged(auth, setUser);
-    return () => unsubscribe();
-  }, []);
-
-  // Fetch Submissions for Admin (Only if authenticated)
-  useEffect(() => {
-    if (!user || !isAdminAuthenticated || view !== 'admin') return;
-
-    const q = collection(db, 'artifacts', appId, 'public', 'data', 'registrations');
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSubmissions(data.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0)));
-    }, (error) => {
-      console.error("Firestore error:", error);
-    });
-
-    return () => unsubscribe();
-  }, [user, view, isAdminAuthenticated]);
-
-  // Countdown Logic
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = CONFERENCE_DATE - now;
-
-      setTimeLeft({
-        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000)
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    if (!user) return;
-    setIsSubmitting(true);
-    try {
-      await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registrations'), {
-        ...formData,
-        userId: user.uid,
-        timestamp: serverTimestamp()
-      });
-      setSuccessMsg(true);
-      setFormData({ name: '', email: '', competition: 'الابتكار الهندسي', phone: '' });
-      setTimeout(() => setSuccessMsg(false), 5000);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleAdminLogin = (e) => {
-    e.preventDefault();
-    if (passcodeInput === ADMIN_PASSCODE) {
-      setIsAdminAuthenticated(true);
-      setAdminError('');
-    } else {
-      setAdminError('رمز الدخول غير صحيح!');
-    }
-  };
-
-  const Nav = () => (
-    <nav className="bg-slate-900 text-white p-4 sticky top-0 z-50 shadow-xl">
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tighter flex items-center gap-2 cursor-pointer" onClick={() => setView('home')}>
-          <div className="bg-blue-600 p-1 rounded">CT</div> Civil Tech
-        </h1>
-        <div className="flex gap-6 items-center">
-          <button onClick={() => setView('home')} className={`hover:text-blue-400 transition ${view === 'home' ? 'text-blue-400' : ''}`}>الرئيسية</button>
-          <button onClick={() => setView('register')} className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition">سجل الآن</button>
-          <button onClick={() => setView('admin')} className={`flex items-center gap-1 text-sm ${view === 'admin' ? 'text-blue-400' : 'text-slate-400'}`}>
-            <LayoutDashboard size={16} /> لوحة التحكم
-          </button>
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass shadow-md py-3">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-microchip text-blue-700 text-3xl"></i>
+                <span class="text-2xl font-bold text-slate-800">CIVILTCTH 2</span>
+            </div>
+            <div class="hidden lg:flex space-x-reverse space-x-6 font-medium">
+                <a href="#agenda" class="hover:text-blue-600 transition">الأجندة</a>
+                <a href="#register" class="hover:text-blue-600 transition">التسجيل</a>
+                <a href="#gallery" class="hover:text-blue-600 transition">المعرض</a>
+                <a href="#admin-section" class="text-red-600 font-bold hover:underline">لوحة التحكم</a>
+            </div>
         </div>
-      </div>
     </nav>
-  );
 
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans text-right" dir="rtl">
-      <Nav />
+    <!-- Hero -->
+    <section class="hero-gradient min-h-[60vh] flex items-center pt-20 text-white relative">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6">CIVILTCTH 2</h1>
+            <p class="text-2xl text-blue-300 mb-8">مؤتمر الهندسة المدنية والتكنولوجيا الحديثة - الخليل</p>
+            <div class="flex justify-center gap-4">
+                <a href="#register" class="bg-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">سجل الآن</a>
+                <a href="#gallery" class="bg-white/10 px-8 py-3 rounded-xl font-bold hover:bg-white/20 transition">مشاهدة المعرض</a>
+            </div>
+        </div>
+    </section>
 
-      {view === 'home' && (
-        <main>
-          <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white py-24 px-4 text-center">
-            <h2 className="text-5xl md:text-7xl font-black mb-6">مؤتمر Civil Tech 2024</h2>
-            <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-              المستقبل يبدأ هنا. انضم إلى نخبة المهندسين والمبتكرين في أضخم حدث تكنولوجي في الهندسة المدنية.
-            </p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-16">
-              {[
-                { label: 'يوم', value: timeLeft.days },
-                { label: 'ساعة', value: timeLeft.hours },
-                { label: 'دقيقة', value: timeLeft.minutes },
-                { label: 'ثانية', value: timeLeft.seconds }
-              ].map((item, i) => (
-                <div key={i} className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-2xl">
-                  <div className="text-4xl md:text-6xl font-mono font-bold text-blue-400">
-                    {item.value || '0'}
-                  </div>
-                  <div className="text-sm uppercase tracking-widest text-slate-400 mt-2">{item.label}</div>
+    <!-- Agenda Section (Dynamic) -->
+    <section id="agenda" class="section-padding bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-12 text-center underline decoration-blue-500 underline-offset-8">أجندة المؤتمر</h2>
+            <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                
+                <!-- Day 1 List -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-blue-800 border-b-2 border-blue-100 pb-2"><i class="fas fa-calendar-day ml-2"></i> اليوم الأول</h3>
+                    <div id="agenda-day1" class="space-y-4">
+                        <p class="text-slate-400 italic">بانتظار إضافة الفقرات من قبل المسؤول...</p>
+                    </div>
                 </div>
-              ))}
+
+                <!-- Day 2 List -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-indigo-800 border-b-2 border-indigo-100 pb-2"><i class="fas fa-calendar-check ml-2"></i> اليوم الثاني</h3>
+                    <div id="agenda-day2" class="space-y-4">
+                        <p class="text-slate-400 italic">بانتظار إضافة الفقرات من قبل المسؤول...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration -->
+    <section id="register" class="section-padding bg-blue-50">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl border border-blue-100">
+                <h2 class="text-3xl font-bold text-center mb-8">نموذج التسجيل</h2>
+                <form id="regForm" class="grid md:grid-cols-2 gap-6">
+                    <input type="text" id="fullName" placeholder="الاسم الكامل" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="email" id="email" placeholder="البريد الإلكتروني" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="tel" id="phone" placeholder="رقم الهاتف" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none">
+                    <select id="track" class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="attendee">حضور فقط</option>
+                        <option value="bridge">مسابقة الجسور</option>
+                        <option value="hackathon">هكاثون عين سارة</option>
+                    </select>
+                    <button type="submit" id="regBtn" class="md:col-span-2 bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition">إرسال التسجيل</button>
+                </form>
+                <div id="regStatus" class="mt-4 hidden text-center p-3 rounded-lg font-bold"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery Section -->
+    <section id="gallery" class="section-padding bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">معرض الصور</h2>
+            <div class="flex justify-center gap-8 mb-12 border-b">
+                <button onclick="switchGallery('tech1')" id="tab-tech1" class="pb-4 px-4 transition tab-active">Civil Tech 1</button>
+                <button onclick="switchGallery('tech2')" id="tab-tech2" class="pb-4 px-4 transition">Civil Tech 2 (الحالي)</button>
+            </div>
+            <div id="gallery-tech1" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=400" class="rounded-xl h-48 w-full object-cover shadow-sm">
+                <img src="https://images.unsplash.com/photo-1503387762-592dea58ef21?q=80&w=400" class="rounded-xl h-48 w-full object-cover shadow-sm">
+            </div>
+            <div id="gallery-tech2" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4">
+                <p id="empty-msg" class="col-span-full text-center text-slate-400 py-10 italic">سيقوم المسؤول برفع صور المؤتمر قريباً...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <section id="admin-section" class="section-padding bg-slate-100 border-t-4 border-red-500">
+        <div class="container mx-auto px-6">
+            <div id="admin-login" class="text-center max-w-md mx-auto">
+                <h2 class="text-2xl font-bold mb-4 text-red-700">لوحة تحكم المسؤول</h2>
+                <input type="password" id="adminPass" placeholder="كلمة المرور" class="w-full px-4 py-2 rounded border mb-4 outline-none">
+                <button onclick="checkAdmin()" class="bg-red-600 text-white px-10 py-2 rounded font-bold shadow-md">دخول</button>
             </div>
 
-            <button 
-              onClick={() => setView('register')}
-              className="bg-blue-600 text-white px-10 py-4 rounded-full text-xl font-bold hover:bg-blue-500 transform hover:scale-105 transition shadow-lg shadow-blue-500/20"
-            >
-              سجل في المسابقات
-            </button>
-          </section>
+            <div id="admin-content" class="hidden space-y-12">
+                
+                <!-- 1. Agenda Manager -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-green-200">
+                    <h3 class="text-2xl font-bold mb-6 text-green-800"><i class="fas fa-tasks ml-2"></i> إدارة الأجندة</h3>
+                    <form id="agendaForm" class="grid md:grid-cols-4 gap-4">
+                        <input type="text" id="agendaTitle" placeholder="عنوان الفقرة" required class="px-4 py-2 border rounded-lg">
+                        <input type="text" id="agendaTime" placeholder="الوقت (مثلاً 09:00 - 10:00)" required class="px-4 py-2 border rounded-lg">
+                        <select id="agendaDay" class="px-4 py-2 border rounded-lg">
+                            <option value="1">اليوم الأول</option>
+                            <option value="2">اليوم الثاني</option>
+                        </select>
+                        <button type="submit" id="agendaBtn" class="bg-green-600 text-white rounded-lg font-bold hover:bg-green-700">إضافة الفقرة</button>
+                    </form>
+                </div>
 
-          <section className="max-w-6xl mx-auto py-20 px-4 grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Trophy className="text-blue-600" size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">مسابقات تقنية</h3>
-              <p className="text-slate-600">نافس في تحديات الهندسة المدنية واربح جوائز قيمة.</p>
+                <!-- 2. Photo Upload -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-blue-200">
+                    <h3 class="text-2xl font-bold mb-6 text-blue-800"><i class="fas fa-upload ml-2"></i> رفع صور المؤتمر الثاني</h3>
+                    <form id="uploadForm" class="space-y-4">
+                        <div id="dropZone" class="upload-area p-8 text-center rounded-2xl bg-slate-50">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden">
+                            <div id="uploadPrompt">إضغط لاختيار صورة</div>
+                            <img id="imgPreview" class="hidden max-h-48 mx-auto mt-4 rounded-xl shadow">
+                        </div>
+                        <input type="text" id="upCaption" placeholder="وصف الصورة" class="w-full px-4 py-2 border rounded-lg">
+                        <button type="submit" id="upBtn" class="w-full bg-blue-700 text-white py-3 rounded-xl font-bold">نشر الصورة</button>
+                    </form>
+                </div>
+
+                <!-- 3. Registrants Stats -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border">
+                    <h3 class="text-2xl font-bold mb-6">المسجلين (<span id="totalCount">0</span>)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-slate-50 border-b">
+                                <tr>
+                                    <th class="p-3">الاسم</th>
+                                    <th class="p-3">الهاتف</th>
+                                    <th class="p-3">المسار</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registrantsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button onclick="logoutAdmin()" class="text-red-600 font-bold underline">خروج</button>
+                </div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="text-green-600" size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">شبكة علاقات</h3>
-              <p className="text-slate-600">تواصل مع كبار الخبراء والشركات في هذا القطاع.</p>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Timer className="text-purple-600" size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">ورش عمل</h3>
-              <p className="text-slate-600">تعلم أحدث التقنيات المستخدمة في التصميم والإنشاء.</p>
-            </div>
-          </section>
-        </main>
-      )}
+        </div>
+    </section>
 
-      {view === 'register' && (
-        <section className="max-w-xl mx-auto py-16 px-4">
-          <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-slate-900 mb-2">تسجيل مسابقة</h2>
-              <p className="text-slate-500">يرجى تعبئة البيانات بدقة للمشاركة</p>
-            </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-            {successMsg ? (
-              <div className="bg-green-50 border border-green-200 text-green-700 p-6 rounded-2xl text-center flex flex-col items-center gap-4">
-                <CheckCircle size={48} />
-                <h4 className="font-bold text-lg">تم التسجيل بنجاح!</h4>
-                <button onClick={() => setView('home')} className="mt-4 text-green-800 underline">العودة للرئيسية</button>
-              </div>
-            ) : (
-              <form onSubmit={handleRegister} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">الاسم الكامل</label>
-                  <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-300" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">البريد الإلكتروني</label>
-                  <input required type="email" className="w-full px-4 py-3 rounded-xl border border-slate-300" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">رقم الهاتف</label>
-                  <input required type="tel" className="w-full px-4 py-3 rounded-xl border border-slate-300" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">اختر المسابقة</label>
-                  <select className="w-full px-4 py-3 rounded-xl border border-slate-300" value={formData.competition} onChange={e => setFormData({...formData, competition: e.target.value})}>
-                    <option>الابتكار الهندسي</option>
-                    <option>أفضل تصميم إنشائي</option>
-                    <option>تكنولوجيا الاستدامة</option>
-                  </select>
-                </div>
-                <button disabled={isSubmitting} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition">
-                  {isSubmitting ? 'جاري الإرسال...' : 'إرسال الطلب'}
-                </button>
-              </form>
-            )}
-          </div>
-        </section>
-      )}
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'civiltcth2-dynamic-agenda';
 
-      {view === 'admin' && (
-        <section className="max-w-6xl mx-auto py-12 px-4">
-          {!isAdminAuthenticated ? (
-            <div className="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
-              <div className="text-center mb-8">
-                <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock className="text-slate-600" size={24} />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-900">دخول المسؤول</h2>
-                <p className="text-slate-500 text-sm">هذه المنطقة محمية، يرجى إدخال الرمز السري</p>
-              </div>
-              <form onSubmit={handleAdminLogin} className="space-y-4">
-                <input 
-                  type="password" 
-                  placeholder="أدخل الرمز السري" 
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 text-center text-2xl tracking-widest outline-none focus:ring-2 focus:ring-blue-500"
-                  value={passcodeInput}
-                  onChange={e => setPasscodeInput(e.target.value)}
-                />
-                {adminError && <p className="text-red-500 text-sm text-center font-bold">{adminError}</p>}
-                <button className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition">دخول</button>
-              </form>
-            </div>
-          ) : (
-            <>
-              <div className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="bg-green-100 p-2 rounded-lg text-green-600">
-                    <ShieldCheck size={24} />
-                  </div>
-                  <h2 className="text-3xl font-bold text-slate-900">لوحة تحكم المسؤول</h2>
-                </div>
-                <div className="flex gap-4">
-                  <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold">إجمالي المسجلين: {submissions.length}</div>
-                  <button onClick={() => setIsAdminAuthenticated(false)} className="text-slate-400 hover:text-red-500 text-sm">خروج من الوضع الآمن</button>
-                </div>
-              </div>
+        let user = null;
 
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-right">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200">
-                        <th className="px-6 py-4 font-bold text-slate-700">الاسم</th>
-                        <th className="px-6 py-4 font-bold text-slate-700">البريد</th>
-                        <th className="px-6 py-4 font-bold text-slate-700">الهاتف</th>
-                        <th className="px-6 py-4 font-bold text-slate-700">المسابقة</th>
-                        <th className="px-6 py-4 font-bold text-slate-700">التاريخ</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {submissions.map((sub) => (
-                        <tr key={sub.id} className="hover:bg-slate-50 transition">
-                          <td className="px-6 py-4 font-medium">{sub.name}</td>
-                          <td className="px-6 py-4 text-slate-600 font-mono text-sm">{sub.email}</td>
-                          <td className="px-6 py-4 text-slate-600">{sub.phone}</td>
-                          <td className="px-6 py-4">
-                            <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">{sub.competition}</span>
-                          </td>
-                          <td className="px-6 py-4 text-slate-400 text-sm">
-                            {sub.timestamp ? new Date(sub.timestamp.seconds * 1000).toLocaleDateString('ar-EG') : '...'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-        </section>
-      )}
+        signInAnonymously(auth);
+        onAuthStateChanged(auth, u => {
+            user = u;
+            if(user) {
+                syncAgenda();
+                syncGallery();
+                syncAdminStats();
+            }
+        });
 
-      <footer className="py-12 border-t border-slate-200 text-center text-slate-500">
-        <p>© 2024 مؤتمر Civil Tech. جميع الحقوق محفوظة.</p>
-      </footer>
-    </div>
-  );
-}
+        // 1. Agenda Management
+        document.getElementById('agendaForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('agendaBtn');
+            btn.disabled = true;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), {
+                    title: document.getElementById('agendaTitle').value,
+                    time: document.getElementById('agendaTime').value,
+                    day: document.getElementById('agendaDay').value,
+                    createdAt: new Date().toISOString()
+                });
+                e.target.reset();
+            } catch(e) { console.error(e); }
+            btn.disabled = false;
+        };
+
+        function syncAgenda() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'agenda'), (snap) => {
+                const day1 = document.getElementById('agenda-day1');
+                const day2 = document.getElementById('agenda-day2');
+                day1.innerHTML = ''; day2.innerHTML = '';
+                
+                const items = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                items.sort((a,b) => a.time.localeCompare(b.time)); // Sorting by time string
+
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = "p-4 bg-white rounded-xl shadow-sm border-r-4 " + (item.day == "1" ? "border-blue-500" : "border-indigo-500");
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-sm font-bold ${item.day == "1" ? "text-blue-600" : "text-indigo-600"}">${item.time}</span>
+                                <p class="font-bold text-slate-800">${item.title}</p>
+                            </div>
+                            <!-- Admin only delete button logic could go here if needed -->
+                        </div>
+                    `;
+                    if(item.day == "1") day1.appendChild(card);
+                    else day2.appendChild(card);
+                });
+
+                if(day1.innerHTML === '') day1.innerHTML = '<p class="text-slate-400 italic text-sm">لا يوجد فقرات مضافة بعد.</p>';
+                if(day2.innerHTML === '') day2.innerHTML = '<p class="text-slate-400 italic text-sm">لا يوجد فقرات مضافة بعد.</p>';
+            });
+        }
+
+        // 2. Tabs & Admin Auth
+        window.switchGallery = (type) => {
+            const t1 = document.getElementById('gallery-tech1');
+            const t2 = document.getElementById('gallery-tech2');
+            const btn1 = document.getElementById('tab-tech1');
+            const btn2 = document.getElementById('tab-tech2');
+            if(type === 'tech1') { t1.classList.remove('hidden'); t2.classList.add('hidden'); btn1.classList.add('tab-active'); btn2.classList.remove('tab-active'); }
+            else { t1.classList.add('hidden'); t2.classList.remove('hidden'); btn1.classList.remove('tab-active'); btn2.classList.add('tab-active'); }
+        };
+
+        window.checkAdmin = () => {
+            if(document.getElementById('adminPass').value === "123456") {
+                document.getElementById('admin-login').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+            } else alert("خطأ!");
+        };
+        window.logoutAdmin = () => {
+            document.getElementById('admin-login').classList.remove('hidden');
+            document.getElementById('admin-content').classList.add('hidden');
+        };
+
+        // 3. Sync Registrants & Gallery (Previous Logic)
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                track: document.getElementById('track').value,
+                time: new Date().toISOString()
+            });
+            document.getElementById('regStatus').className = "mt-4 p-3 rounded-lg bg-green-100 text-green-700 block";
+            document.getElementById('regStatus').innerText = "تم التسجيل!";
+            e.target.reset();
+        };
+
+        const fileInput = document.getElementById('fileInput');
+        document.getElementById('dropZone').onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('imgPreview').src = ev.target.result;
+                    document.getElementById('imgPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const img = document.getElementById('imgPreview').src;
+            if(!img) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), {
+                image: img, caption: document.getElementById('upCaption').value, time: new Date().toISOString()
+            });
+            e.target.reset();
+            document.getElementById('imgPreview').classList.add('hidden');
+            alert("تم الرفع!");
+        };
+
+        function syncGallery() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'gallery_v2'), (snap) => {
+                const grid = document.getElementById('gallery-tech2');
+                const empty = document.getElementById('empty-msg');
+                const docs = snap.docs.map(d => d.data());
+                if(docs.length > 0) {
+                    empty.classList.add('hidden');
+                    grid.innerHTML = '';
+                    docs.forEach(p => {
+                        grid.innerHTML += `<div class="bg-white p-1 rounded-xl border shadow-sm"><img src="${p.image}" class="rounded-lg h-40 w-full object-cover"><p class="text-[10px] text-center mt-1 truncate">${p.caption}</p></div>`;
+                    });
+                }
+            });
+        }
+
+        function syncAdminStats() {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'registrants'), (snap) => {
+                const list = snap.docs.map(d => d.data());
+                document.getElementById('totalCount').innerText = list.length;
+                const table = document.getElementById('registrantsTable');
+                table.innerHTML = '';
+                list.forEach(r => {
+                    table.innerHTML += `<tr class="border-b text-sm"><td class="p-3 font-bold">${r.name}</td><td class="p-3">${r.phone}</td><td class="p-3 text-blue-600">${r.track}</td></tr>`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
